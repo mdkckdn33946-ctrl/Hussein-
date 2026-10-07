@@ -1,2 +1,577 @@
-# Hussein-
-لل ولد احبه
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إلى حسون الغالي 💙✨</title>
+    
+    <!-- Three.js Library for 3D Visuals -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #030712;
+            color: #ffffff;
+        }
+
+        /* 3D Canvas Background */
+        #webgl-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Glassmorphism Card Container */
+        .main-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 440px;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 32px;
+            padding: 40px 28px 32px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7),
+                        0 0 40px rgba(59, 130, 246, 0.25);
+            transform: translateY(0);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.05),
+                transparent
+            );
+            transform: skewX(-15deg);
+            animation: shine 8s infinite;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            20% { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        /* Floating Avatar Sphere Glow */
+        .avatar-wrapper {
+            position: relative;
+            width: 110px;
+            height: 110px;
+            margin: 0 auto 24px;
+        }
+
+        .avatar-bg {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 52px;
+            box-shadow: 0 0 35px rgba(59, 130, 246, 0.6);
+            animation: floatAnim 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatAnim {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(-8px) scale(1.05); }
+        }
+
+        .badge {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            background: #ffffff;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            animation: pulseBadge 1.5s infinite alternate;
+        }
+
+        @keyframes pulseBadge {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.15); }
+        }
+
+        /* Content Transitions */
+        .content-box {
+            min-height: 190px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+
+        .content-box.fade-out {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        .title {
+            font-size: 25px;
+            font-weight: 800;
+            background: linear-gradient(to right, #60a5fa, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 14px;
+            line-height: 1.3;
+        }
+
+        .message {
+            font-size: 17px;
+            line-height: 1.8;
+            color: #e2e8f0;
+            font-weight: 500;
+            margin-bottom: 28px;
+            padding: 0 5px;
+        }
+
+        /* Action Buttons */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.5);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 100%;
+            max-width: 240px;
+            outline: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover, .btn:active {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 15px 30px -5px rgba(139, 92, 246, 0.6);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Progress Dots */
+        .dots-container {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 28px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.4s ease;
+        }
+
+        .dot.active {
+            width: 28px;
+            border-radius: 10px;
+            background: #60a5fa;
+            box-shadow: 0 0 12px #60a5fa;
+        }
+
+        /* Counter Styling */
+        .love-counter {
+            font-size: 42px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #60a5fa, #c084fc, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 15px 0;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 3D Canvas Background -->
+    <div id="webgl-container"></div>
+
+    <!-- UI Card Container -->
+    <div class="main-wrapper">
+        <div class="card">
+            <div class="avatar-wrapper">
+                <div class="avatar-bg" id="avatarEmoji">👑</div>
+                <div class="badge" id="badgeEmoji">💙</div>
+            </div>
+
+            <div class="content-box" id="contentBox"></div>
+            <div class="dots-container" id="dotsContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================
+        // 1. THREE.JS 3D BACKGROUND SCENE SETUP
+        // =========================================================
+        const container = document.getElementById('webgl-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x030712, 0.02);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 25;
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        scene.add(ambientLight);
+
+        const pointLight1 = new THREE.PointLight(0x3b82f6, 3, 50);
+        pointLight1.position.set(10, 10, 10);
+        scene.add(pointLight1);
+
+        const pointLight2 = new THREE.PointLight(0xec4899, 3, 50);
+        pointLight2.position.set(-10, -10, -10);
+        scene.add(pointLight2);
+
+        // Create Floating 3D Geometries (Hearts / Spheres / Torus Stars)
+        const floatingObjects = [];
+        const geometries = [
+            new THREE.IcosahedronGeometry(1.2, 0),
+            new THREE.TorusGeometry(1, 0.3, 16, 100),
+            new THREE.OctahedronGeometry(1.4, 0),
+            new THREE.SphereGeometry(1, 16, 16)
+        ];
+
+        const materials = [
+            new THREE.MeshStandardMaterial({ color: 0x3b82f6, roughness: 0.2, metalness: 0.8 }),
+            new THREE.MeshStandardMaterial({ color: 0x8b5cf6, roughness: 0.3, metalness: 0.7 }),
+            new THREE.MeshStandardMaterial({ color: 0xec4899, roughness: 0.2, metalness: 0.9 }),
+            new THREE.MeshStandardMaterial({ color: 0x06b6d4, roughness: 0.1, metalness: 0.5 })
+        ];
+
+        // Heart Shape 3D Generator
+        function createHeartMesh() {
+            const shape = new THREE.Shape();
+            const x = 0, y = 0;
+            shape.moveTo(x + 0.25, y + 0.25);
+            shape.bezierCurveTo(x + 0.25, y + 0.25, x + 0.2, y, x, y);
+            shape.bezierCurveTo(x - 0.3, y, x - 0.3, y + 0.35, x - 0.3, y + 0.35);
+            shape.bezierCurveTo(x - 0.3, y + 0.55, x - 0.1, y + 0.77, x + 0.25, y + 0.95);
+            shape.bezierCurveTo(x + 0.6, y + 0.77, x + 0.8, y + 0.55, x + 0.8, y + 0.35);
+            shape.bezierCurveTo(x + 0.8, y + 0.35, x + 0.8, y, x + 0.5, y);
+            shape.bezierCurveTo(x + 0.35, y, x + 0.25, y + 0.25, x + 0.25, y + 0.25);
+
+            const extrudeSettings = { depth: 0.2, bevelEnabled: true, bevelSegments: 3, steps: 1, bevelSize: 0.1, bevelThickness: 0.1 };
+            const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+            geometry.center();
+            return geometry;
+        }
+
+        const heartGeometry = createHeartMesh();
+
+        // Spawn Floating Items
+        for (let i = 0; i < 40; i++) {
+            const isHeart = Math.random() > 0.4;
+            const geom = isHeart ? heartGeometry : geometries[Math.floor(Math.random() * geometries.length)];
+            const mat = materials[Math.floor(Math.random() * materials.length)];
+            const mesh = new THREE.Mesh(geom, mat);
+
+            mesh.position.x = (Math.random() - 0.5) * 50;
+            mesh.position.y = (Math.random() - 0.5) * 50;
+            mesh.position.z = (Math.random() - 0.5) * 30;
+
+            const scale = Math.random() * 0.8 + 0.5;
+            mesh.scale.set(scale, scale, scale);
+
+            mesh.rotation.x = Math.random() * Math.PI;
+            mesh.rotation.y = Math.random() * Math.PI;
+
+            mesh.userData = {
+                rotSpeedX: (Math.random() - 0.5) * 0.02,
+                rotSpeedY: (Math.random() - 0.5) * 0.02,
+                floatSpeed: Math.random() * 0.01 + 0.005,
+                initialY: mesh.position.y
+            };
+
+            scene.add(mesh);
+            floatingObjects.push(mesh);
+        }
+
+        // Particle System Background
+        const particleCount = 200;
+        const particleGeo = new THREE.BufferGeometry();
+        const particleCoords = new Float32Array(particleCount * 3);
+
+        for(let i=0; i<particleCount*3; i+=3) {
+            particleCoords[i] = (Math.random() - 0.5) * 60;
+            particleCoords[i+1] = (Math.random() - 0.5) * 60;
+            particleCoords[i+2] = (Math.random() - 0.5) * 40;
+        }
+
+        particleGeo.setAttribute('position', new THREE.BufferAttribute(particleCoords, 3));
+        const particleMat = new THREE.PointsMaterial({
+            size: 0.15,
+            color: 0x60a5fa,
+            transparent: true,
+            opacity: 0.6
+        });
+        const particleSystem = new THREE.Points(particleGeo, particleMat);
+        scene.add(particleSystem);
+
+        // Render Loop
+        let clock = new THREE.Clock();
+        function animate() {
+            requestAnimationFrame(animate);
+            const elapsedTime = clock.getElapsedTime();
+
+            floatingObjects.forEach(obj => {
+                obj.rotation.x += obj.userData.rotSpeedX;
+                obj.rotation.y += obj.userData.rotSpeedY;
+                obj.position.y = obj.userData.initialY + Math.sin(elapsedTime * 1.5 + obj.position.x) * 1.2;
+            });
+
+            particleSystem.rotation.y = elapsedTime * 0.02;
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Responsive Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+
+        // =========================================================
+        // 2. INTERACTIVE STORY STEPS DATA (HASSOON VERSION)
+        // =========================================================
+        const steps = [
+            {
+                emoji: "👑",
+                badge: "💙",
+                title: "هلوو بالضلع حسون ✨",
+                message: "عندي رسالة خاصة وإلك وحدك.. تدري شنو هي لو أقول لك مباشرة؟ 🙈🔥",
+                btnText: "شنو هي؟ احكي! 🥺"
+            },
+            {
+                emoji: "💙💎",
+                badge: "✨",
+                title: "يا أطلق وأعز صديق بالدنيا ⚡",
+                message: "الحياة حلوة بوجودك، وأنت مو بس صديق.. أنت أخ وسند وماكو منك اثنين بأصلك وطيبة قلبك! 👑👑",
+                btnText: "حبيبي تدلل 💕"
+            },
+            {
+                emoji: "🥺🔥",
+                badge: "💖",
+                title: "سؤال صريح حسوني..",
+                message: "معقولة حسون الضلع يعزني ويحبني مثل ما أني أعتبره أغلى إنسان بصحبتي ودنيتي؟ 🙈❤️",
+                btnText: "أي أكيد معزتك بقلبي! 💙",
+                altBtnText: "ممم.. يمكن أسبوع طالع! 😜"
+            },
+            {
+                emoji: "🥰⚡",
+                badge: "👑",
+                title: "وأني أعزك وأعشق صحبتك أكيد! ❤️",
+                message: "لو تدري شكد وجودك بالدنيا يغير الجو وينطي طاقة إيجابية.. جان عرفت أنك مكسب لأي شخص يعرفك! 👑✨",
+                btnText: "شكد تحبني وتغليني؟ 🤔"
+            },
+            {
+                emoji: "💎💙",
+                badge: "🚀",
+                title: "حسون أنت الأصل كله!",
+                message: "معزتك وحبي إلك قد السلسلة الكونية وزايد! أحسن وأوفى صديق بالدنيا كلها بدون منازع 👑🔥",
+                btnText: "شوف نسبة غلاك 😍"
+            },
+            {
+                emoji: "👑💙",
+                badge: "🏆",
+                title: "نسبة غلاك وحبي إلك يا حسون:",
+                isFinal: true
+            }
+        ];
+
+        let currentStep = 0;
+
+        // Render Dots Progress
+        function renderDots() {
+            const container = document.getElementById('dotsContainer');
+            container.innerHTML = '';
+            steps.forEach((_, idx) => {
+                const dot = document.createElement('div');
+                dot.className = `dot ${idx === currentStep ? 'active' : ''}`;
+                container.appendChild(dot);
+            });
+        }
+
+        // Show Current Step
+        function showStep(index) {
+            const step = steps[index];
+            const contentBox = document.getElementById('contentBox');
+            const avatarEmoji = document.getElementById('avatarEmoji');
+            const badgeEmoji = document.getElementById('badgeEmoji');
+
+            contentBox.classList.add('fade-out');
+
+            setTimeout(() => {
+                avatarEmoji.textContent = step.emoji;
+                badgeEmoji.textContent = step.badge;
+
+                if (step.isFinal) {
+                    contentBox.innerHTML = `
+                        <div class="title">${step.title}</div>
+                        <div class="love-counter" id="counter">0%</div>
+                        <div class="message" style="margin-bottom:18px;">معزتك لا نهائية يا حسوني الغالي 💙👑</div>
+                        <div class="btn-group">
+                            <button class="btn" onclick="restart()">إعادة الرسالة 🔄</button>
+                        </div>
+                    `;
+                    animateCounter();
+                    triggerConfetti();
+                } else if (step.altBtnText) {
+                    contentBox.innerHTML = `
+                        <div class="title">${step.title}</div>
+                        <div class="message">${step.message}</div>
+                        <div class="btn-group">
+                            <button class="btn" onclick="nextStep()">${step.btnText}</button>
+                            <button class="btn btn-secondary" onclick="nextStep()">${step.altBtnText}</button>
+                        </div>
+                    `;
+                } else {
+                    contentBox.innerHTML = `
+                        <div class="title">${step.title}</div>
+                        <div class="message">${step.message}</div>
+                        <div class="btn-group">
+                            <button class="btn" onclick="nextStep()">${step.btnText}</button>
+                        </div>
+                    `;
+                }
+
+                contentBox.classList.remove('fade-out');
+                renderDots();
+            }, 300);
+        }
+
+        function nextStep() {
+            if (currentStep < steps.length - 1) {
+                currentStep++;
+                showStep(currentStep);
+            }
+        }
+
+        function restart() {
+            currentStep = 0;
+            showStep(currentStep);
+        }
+
+        // Counter Animation
+        function animateCounter() {
+            let count = 0;
+            const target = 1000000;
+            const counterEl = document.getElementById('counter');
+            const timer = setInterval(() => {
+                count += 28000;
+                if (count >= target) {
+                    counterEl.textContent = "1,000,000% ∞";
+                    clearInterval(timer);
+                } else {
+                    counterEl.textContent = `${count.toLocaleString()}%`;
+                }
+            }, 30);
+        }
+
+        // Confetti Celebration
+        function triggerConfetti() {
+            const count = 200;
+            const defaults = { origin: { y: 0.7 } };
+
+            function fire(particleRatio, opts) {
+                confetti(Object.assign({}, defaults, opts, {
+                    particleCount: Math.floor(count * particleRatio)
+                }));
+            }
+
+            fire(0.25, { spread: 26, startVelocity: 55, colors: ['#3b82f6', '#60a5fa'] });
+            fire(0.2, { spread: 60, colors: ['#8b5cf6', '#a78bfa'] });
+            fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8, colors: ['#ec4899', '#38bdf8'] });
+            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+            fire(0.1, { spread: 120, startVelocity: 45 });
+        }
+
+        // Initialize First View
+        showStep(0);
+    </script>
+</body>
+</html>
+
